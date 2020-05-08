@@ -1,0 +1,34 @@
+NAME: Eric Chen
+EMAIL: erchen3pro@gmail.com
+ID: 
+
+lab1a.c:
+	Program that exploited Terminal I/O modes. Utilized Polled I/O and interprocess communications.
+	Contains the source code, an exercise that manipulates pipes to redirect I/O. When passing
+	a --shell option, redirection of I/O between the terminal and shell occur.
+
+
+Makefile:
+	default:
+		compiles the program checking for warnings as specified and creates the executable.
+	dist:
+		creates the tarball specified for delivery.
+	clean:
+		option to literally clean things up uses rm --force
+
+
+Sources:
+
+For the atexit, I looked at the exit(2) at the bottom of the man page for termios,
+and noticed it was exactly what I needed
+http://man7.org/linux/man-pages/man3/atexit.3.html
+Learning about forks
+https://www.geeksforgeeks.org/fork-system-call/
+Learning about exec
+https://www.geeksforgeeks.org/exec-family-of-functions-in-c/
+
+Non canonical input and no echo referred to GNU documentation
+https://www.gnu.org/software/libc/manual/html_node/Canonical-or-Not.html
+
+Many of the resources referenced came from the GNU documentation Chapter 17,
+low-level Terminal interface.

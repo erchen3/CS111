@@ -1,0 +1,45 @@
+
+NAME: ERIC CHEN
+EMAIL: erchen3pro@gmail.com
+ID: 
+
+lab1b-client:
+	This program is	part 1 of 2 that contributes to	passing	input and output over a	TCP socket and is the client side.
+	You must set up	the server first and specify the port number in	order to utilize this program
+	It takes two options,
+	--compress   will deflate/inflate data sent over I/O
+        --log=LogFile     will write sent/received data	to a log file
+        --port=PortNum	  specifies the	port number to connect on
+
+
+lab1b-server:
+	This program is	part 2 of 2 that contributes to	passing	input and output over a	TCP socket and is the server side.
+	This program utilizes much of the functionality	as of 1A where we fork a process. In a high-level this handles I/O
+        from the client	and shell.
+        It takes,
+        --port=PortNum	specifies port number to set up	connection
+        --compress	will deflate/inflate data sent over I/O
+
+Makefile:
+	default: Compile lab1b-client.c	and lab1b-server.c properly as specified
+	
+        clean: "Cleans"	all the	files that are tar.gz's	.txt's and executables
+		
+        dist: Compresses the necessary files such as README, Makefile, lab1b-client.c lab1b-server.c for submission
+
+
+Sources:
+
+I read the man pages for functions I wasn't familiar with and stackOverflow for compiling mistakes such as
+using the gcc flag -lz.
+
+Socket Tutorials
+       http://www.cs.rpi.edu/~moorthy/Courses/os98/Pgms/socket.html
+       https://www.geeksforgeeks.org/socket-programming-cc/
+zlib
+	https://www.zlib.net/zlib_how.html
+	https://www.zlib.net/manual.html
+
+
+
+

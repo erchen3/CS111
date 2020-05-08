@@ -1,0 +1,288 @@
+Total: 30 samples
+      27  90.0%  90.0%       28  93.3% threadWork
+       2   6.7%  96.7%        2   6.7% __random_r
+       1   3.3% 100.0%        1   3.3% SortedList_insert
+       0   0.0% 100.0%       28  93.3% __clone
+       0   0.0% 100.0%        2   6.7% __libc_start_main
+       0   0.0% 100.0%        2   6.7% __srandom
+       0   0.0% 100.0%        2   6.7% __srandom_r
+       0   0.0% 100.0%        2   6.7% _start
+       0   0.0% 100.0%        2   6.7% createKey
+       0   0.0% 100.0%        2   6.7% main
+       0   0.0% 100.0%       28  93.3% start_thread
+ROUTINE ====================== threadWork in /u/cs/ugrad/jeung/cs111/lab2b/lab2_list.c
+    27     28 Total samples (flat / cumulative)
+     .      .   61: Function that will run SortedList_insert,delete,lookup, and length
+     .      .   62: but corresponding to the lock mechanism specified This gets passed into pthread_create.
+     .      .   63: 
+     .      .   64: 
+     .      .   65:  */
+---
+     .      .   66: void* threadWork(void *tid){
+     .      .   67:   struct timespec lockStart, lockEnd;
+     .      .   68:   int id= *(int *)tid;
+     .      .   69:   int length;
+     .      .   70: 
+     .      .   71: 
+     .      .   72:   //insertion
+     .      .   73:   for(int i=id; i<totalElements; i+=numThread){
+     .      .   74:     if(mutex){
+     .      .   75:       clocking(&lockStart);
+     .      .   76:       pthread_mutex_lock(&mymutex);
+     .      .   77:       clocking(&lockEnd);
+     .      .   78:      
+     .      .   79:      
+     .      .   80:       SortedList_insert(list,&elements[i]);
+     .      .   81:       pthread_mutex_unlock(&mymutex);
+     .      .   82:       
+     .      .   83:     }
+     .      .   84:     else if(spinLock){
+     .      .   85:       clocking(&lockStart);
+    24     24   86:       while(__sync_lock_test_and_set(&lock, 1));
+     .      .   87:       clocking(&lockEnd);
+     .      .   88:      
+     .      .   89: 
+     .      1   90:       SortedList_insert(list,&elements[i]);
+     .      .   91:       __sync_lock_release(&lock);
+     .      .   92:     }
+     .      .   93:     else{//not locking
+     .      .   94:       SortedList_insert(list,&elements[i]);
+     .      .   95:     }
+     .      .   96:     //add time for the tread
+     .      .   97:     threadLockTime[id] += 1000000000*(lockEnd.tv_sec-lockStart.tv_sec) + (lockEnd.tv_nsec -lockStart.tv_nsec);
+     .      .   98: 
+     .      .   99:    
+     .      .  100:   }
+     .      .  101: 
+     .      .  102:   //length
+     .      .  103:    if(mutex){
+     .      .  104:      clocking(&lockStart);
+     .      .  105:      pthread_mutex_lock(&mymutex);
+     .      .  106:      clocking(&lockEnd);
+     .      .  107:      
+     .      .  108:      length = SortedList_length(list);
+     .      .  109:      pthread_mutex_unlock(&mymutex);
+     .      .  110:     }
+     .      .  111:     else if(spinLock){
+     .      .  112: 
+     .      .  113:       clocking(&lockStart);
+     .      .  114:       while(__sync_lock_test_and_set(&lock, 1));
+     .      .  115:       clocking(&lockEnd);
+     .      .  116: 
+     .      .  117:       length = SortedList_length(list);
+     .      .  118:       __sync_lock_release(&lock);
+     .      .  119:     }
+     .      .  120:     else{      
+     .      .  121:       length = SortedList_length(list);
+     .      .  122:     }
+     .      .  123: 
+     .      .  124:   if( length <0){
+     .      .  125:     fprintf(stderr,"Error SortedList_length has a corruption issue.");
+     .      .  126:     exit(2);
+     .      .  127:   }
+     .      .  128:   //add the time for lock on length for the id that has been used , single operation
+     .      .  129:   threadLockTime[id] += 1000000000*(lockEnd.tv_sec-lockStart.tv_sec) +	(lockEnd.tv_nsec -lockStart.tv_nsec);
+     .      .  130:   
+     .      .  131:   //deletion
+     .      .  132:   SortedListElement_t *temp;
+     .      .  133:   for(int i=id; i <totalElements; i+=numThread){
+     .      .  134:     
+     .      .  135:     if(mutex){
+     .      .  136: 
+     .      .  137:       clocking(&lockStart);
+     .      .  138:       pthread_mutex_lock(&mymutex);
+     .      .  139:       clocking(&lockEnd);
+     .      .  140:        temp = SortedList_lookup(list,elements[i].key);
+     .      .  141:        
+     .      .  142:        if(temp == NULL){
+     .      .  143: 	 fprintf(stderr,"Error SortedList_lookup has a corruption issue.");
+     .      .  144: 	 exit(2);
+     .      .  145:        }
+     .      .  146: 
+     .      .  147:        SortedList_delete(temp);
+     .      .  148: 	 
+     .      .  149: 
+     .      .  150:        pthread_mutex_unlock(&mymutex);
+     .      .  151:     }
+     .      .  152:     else if(spinLock){
+     .      .  153: 
+     .      .  154: 
+     .      .  155:       clocking(&lockStart);
+     3      3  156:       while(__sync_lock_test_and_set(&lock, 1));
+     .      .  157:       clocking(&lockEnd);
+     .      .  158:       
+     .      .  159:       temp = SortedList_lookup(list,elements[i].key);
+     .      .  160:       
+     .      .  161:       if(temp == NULL){
+     .      .  162: 	fprintf(stderr,"Error SortedList_lookup has a corruption issue.");
+     .      .  163: 	exit(2);
+     .      .  164:       }
+     .      .  165:       SortedList_delete(temp);
+     .      .  166:             
+     .      .  167:       __sync_lock_release(&lock);
+     .      .  168:     }
+     .      .  169:     else{//no sync
+     .      .  170:       
+     .      .  171:       
+     .      .  172:       
+     .      .  173:       temp = SortedList_lookup(list,elements[i].key);
+     .      .  174:       
+     .      .  175:       if(temp == NULL){
+     .      .  176: 	fprintf(stderr,"Error SortedList_lookup has a corruption issue.");
+     .      .  177: 	exit(2);
+     .      .  178:       }
+     .      .  179:      
+     .      .  180:       SortedList_delete(temp);
+     .      .  181:       
+     .      .  182:       
+     .      .  183:     }
+     .      .  184:     //add the time                                                                                                                                            
+     .      .  185:     threadLockTime[id] += 1000000000*(lockEnd.tv_sec-lockStart.tv_sec) +	(lockEnd.tv_nsec -lockStart.tv_nsec);
+     .      .  186:  
+     .      .  187:   }
+     .      .  188:   return NULL;
+     .      .  189: }
+---
+     .      .  190: 
+     .      .  191: /*
+     .      .  192: 
+     .      .  193: Function that will generate a random key that helps initalize the "nodes" in the
+     .      .  194: list object.
+ROUTINE ====================== threadWork in /u/cs/ugrad/jeung/cs111/lab2b/lab2_list.c
+    27     28 Total samples (flat / cumulative)
+     .      .   61: Function that will run SortedList_insert,delete,lookup, and length
+     .      .   62: but corresponding to the lock mechanism specified This gets passed into pthread_create.
+     .      .   63: 
+     .      .   64: 
+     .      .   65:  */
+---
+     .      .   66: void* threadWork(void *tid){
+     .      .   67:   struct timespec lockStart, lockEnd;
+     .      .   68:   int id= *(int *)tid;
+     .      .   69:   int length;
+     .      .   70: 
+     .      .   71: 
+     .      .   72:   //insertion
+     .      .   73:   for(int i=id; i<totalElements; i+=numThread){
+     .      .   74:     if(mutex){
+     .      .   75:       clocking(&lockStart);
+     .      .   76:       pthread_mutex_lock(&mymutex);
+     .      .   77:       clocking(&lockEnd);
+     .      .   78:      
+     .      .   79:      
+     .      .   80:       SortedList_insert(list,&elements[i]);
+     .      .   81:       pthread_mutex_unlock(&mymutex);
+     .      .   82:       
+     .      .   83:     }
+     .      .   84:     else if(spinLock){
+     .      .   85:       clocking(&lockStart);
+    24     24   86:       while(__sync_lock_test_and_set(&lock, 1));
+     .      .   87:       clocking(&lockEnd);
+     .      .   88:      
+     .      .   89: 
+     .      1   90:       SortedList_insert(list,&elements[i]);
+     .      .   91:       __sync_lock_release(&lock);
+     .      .   92:     }
+     .      .   93:     else{//not locking
+     .      .   94:       SortedList_insert(list,&elements[i]);
+     .      .   95:     }
+     .      .   96:     //add time for the tread
+     .      .   97:     threadLockTime[id] += 1000000000*(lockEnd.tv_sec-lockStart.tv_sec) + (lockEnd.tv_nsec -lockStart.tv_nsec);
+     .      .   98: 
+     .      .   99:    
+     .      .  100:   }
+     .      .  101: 
+     .      .  102:   //length
+     .      .  103:    if(mutex){
+     .      .  104:      clocking(&lockStart);
+     .      .  105:      pthread_mutex_lock(&mymutex);
+     .      .  106:      clocking(&lockEnd);
+     .      .  107:      
+     .      .  108:      length = SortedList_length(list);
+     .      .  109:      pthread_mutex_unlock(&mymutex);
+     .      .  110:     }
+     .      .  111:     else if(spinLock){
+     .      .  112: 
+     .      .  113:       clocking(&lockStart);
+     .      .  114:       while(__sync_lock_test_and_set(&lock, 1));
+     .      .  115:       clocking(&lockEnd);
+     .      .  116: 
+     .      .  117:       length = SortedList_length(list);
+     .      .  118:       __sync_lock_release(&lock);
+     .      .  119:     }
+     .      .  120:     else{      
+     .      .  121:       length = SortedList_length(list);
+     .      .  122:     }
+     .      .  123: 
+     .      .  124:   if( length <0){
+     .      .  125:     fprintf(stderr,"Error SortedList_length has a corruption issue.");
+     .      .  126:     exit(2);
+     .      .  127:   }
+     .      .  128:   //add the time for lock on length for the id that has been used , single operation
+     .      .  129:   threadLockTime[id] += 1000000000*(lockEnd.tv_sec-lockStart.tv_sec) +	(lockEnd.tv_nsec -lockStart.tv_nsec);
+     .      .  130:   
+     .      .  131:   //deletion
+     .      .  132:   SortedListElement_t *temp;
+     .      .  133:   for(int i=id; i <totalElements; i+=numThread){
+     .      .  134:     
+     .      .  135:     if(mutex){
+     .      .  136: 
+     .      .  137:       clocking(&lockStart);
+     .      .  138:       pthread_mutex_lock(&mymutex);
+     .      .  139:       clocking(&lockEnd);
+     .      .  140:        temp = SortedList_lookup(list,elements[i].key);
+     .      .  141:        
+     .      .  142:        if(temp == NULL){
+     .      .  143: 	 fprintf(stderr,"Error SortedList_lookup has a corruption issue.");
+     .      .  144: 	 exit(2);
+     .      .  145:        }
+     .      .  146: 
+     .      .  147:        SortedList_delete(temp);
+     .      .  148: 	 
+     .      .  149: 
+     .      .  150:        pthread_mutex_unlock(&mymutex);
+     .      .  151:     }
+     .      .  152:     else if(spinLock){
+     .      .  153: 
+     .      .  154: 
+     .      .  155:       clocking(&lockStart);
+     3      3  156:       while(__sync_lock_test_and_set(&lock, 1));
+     .      .  157:       clocking(&lockEnd);
+     .      .  158:       
+     .      .  159:       temp = SortedList_lookup(list,elements[i].key);
+     .      .  160:       
+     .      .  161:       if(temp == NULL){
+     .      .  162: 	fprintf(stderr,"Error SortedList_lookup has a corruption issue.");
+     .      .  163: 	exit(2);
+     .      .  164:       }
+     .      .  165:       SortedList_delete(temp);
+     .      .  166:             
+     .      .  167:       __sync_lock_release(&lock);
+     .      .  168:     }
+     .      .  169:     else{//no sync
+     .      .  170:       
+     .      .  171:       
+     .      .  172:       
+     .      .  173:       temp = SortedList_lookup(list,elements[i].key);
+     .      .  174:       
+     .      .  175:       if(temp == NULL){
+     .      .  176: 	fprintf(stderr,"Error SortedList_lookup has a corruption issue.");
+     .      .  177: 	exit(2);
+     .      .  178:       }
+     .      .  179:      
+     .      .  180:       SortedList_delete(temp);
+     .      .  181:       
+     .      .  182:       
+     .      .  183:     }
+     .      .  184:     //add the time                                                                                                                                            
+     .      .  185:     threadLockTime[id] += 1000000000*(lockEnd.tv_sec-lockStart.tv_sec) +	(lockEnd.tv_nsec -lockStart.tv_nsec);
+     .      .  186:  
+     .      .  187:   }
+     .      .  188:   return NULL;
+     .      .  189: }
+---
+     .      .  190: 
+     .      .  191: /*
+     .      .  192: 
+     .      .  193: Function that will generate a random key that helps initalize the "nodes" in the
+     .      .  194: list object.

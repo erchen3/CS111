@@ -1,0 +1,32 @@
+NAME: Eric Chen
+EMAIL: erchen3pro@gmail.com
+ID: 305099495
+
+
+lab4b.c:
+	Driver program utilizing GPIO/AIO API's and command-line options to utilize the Beaglebone sensors and button.
+	Generates a report for each sample on the temperate and time. By default, it's reported in Fahrenheit. The user
+	can pass in user-commands such as, SCALE=C/F , PERIOD=#NUMBER , LOG=LOGFILETOWRITETO, STOP, START, and OFF.
+		
+Makefile:
+	default:
+		builds the program to create the executable
+	check:
+		an automated smoke-test of the application verifying that it works and can talk to the sensors.
+		 Uses the provided sanity check as a means to test functionality.
+	clean:
+		Deletes all the programs that the Makefile generates.
+	dist:
+		builds the tarball for homework submission.
+
+test.sh:
+	Provided sanity checker that verifies functionality of the program used in check.
+
+Citations:
+	Temperature Algorithm adapted by
+		    http://wiki.seeedstudio.com/Grove-Temperature_Sensor_V1.2/
+	GPIO API
+	     https://iotdk.intel.com/docs/master/mraa/gpio_8h.html
+	AOI API
+	    https://iotdk.intel.com/docs/master/mraa/aio_8h.html
+	    

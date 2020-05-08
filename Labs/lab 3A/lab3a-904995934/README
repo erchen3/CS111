@@ -1,0 +1,26 @@
+NAME: Eric Chen, Julia Wang
+EMAIL: erchen3pro@gmail.com, julia.wang.ca@gmail.com
+ID: 305099495, 904995934
+
+Makefile: default: compile program
+	  dist: create tarball
+	  clean: delete programs made by Makefile
+	  
+lab3a.c: 
+	 superblcok summary: gives description of total num of blocks, total num i-nodes, block size, i-node size, blcoks per group, i-node per group, first non-reserved i-node
+
+	 group summary: gives description of group num, total num blocks in group, total num i-nodes in group, numb free blocks, free i-nodes, block num free block bitmap, block num free i-node bitmap, block num first block i-nodes
+
+	 free block entries: scan free block bitmap, each free block describe num of free block
+
+	 free I-node entries: scan free I-node bitmap, each free i-node describe num free I-node
+
+	 I-node summary: scan I-nodes of each group, give inod num, file type, mode, owner, group, link count, time of last I-node change, modification time, time last access, file size, number blocks disk space
+
+	 directory entires: for each directory I-node scan, scan every data block give parent inode num, logical byte offset, inode num, entry length, name length, name
+
+	 indirector block ref: gice I-node num, level indirection, logical block offset, block number of indirect block scanned, blcok num of referenced block 
+links:
+	http://pubs.opengroup.org/onlinepubs/7908799/xsh/sysstat.h.html
+	http://cs.smith.edu/~nhowe/Teaching/csc262/oldlabs/ext2.html
+	https://www.halolinux.us/kernel-reference/group-descriptor-and-bitmap.html

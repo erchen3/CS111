@@ -1,0 +1,61 @@
+NAME: Eric Chen
+EMAIL: erchen3pro@gmail.com
+ID: 
+
+
+lab0.c:
+C Program that utilizes the API getopt to parse command-line options such as
+
+input- reads from file to stdout, will exit 2 if not able to read file.
+       Utilizes input file redirection to accomplish this so file descriptor 0
+       will refer to the file.
+	
+output - reads from stdin to a file, will exit 3 if not able to create file
+       	 Utilizes output file redirection, file descriptor 1 will refer to file.
+	 We have a general read from fd 0 and write to fd 1 and will correspond
+	 accordingly.
+	 
+catch- catches a segfault exit 4
+       expects to get a segfault or will not do "anything"
+       when it gets segfault it will print a notice.
+       
+segfault - forces segfault.
+
+
+Makefile:
+	default:
+		Compiles the program as specified in the specs.
+	clean:
+		removes everything to "clean" it up.
+	dist:
+		create the archived tarball.
+		
+	check: this target runs all smoke tests and compiles.
+
+	sillyArg:
+		first smoke test making sure that we get the proper exit status when
+		we use a bad option that doesn't exist. Exit status should be 1.
+	segFaultTest:
+		second smoke test making sure we get proper exit status when we catch a segfault
+		and the status for exit should be 4.
+	OpenFile:
+		3rd smoke test ensuring we get the right exits status(2) if we can't open a file.
+	createFile:
+		4th smoke test ensuring we get right exit status(3) if we cant create the file to write to.
+	smoothRun:
+		Last smoke test running --input --output simultaneously and making sure we exit successfuly.
+
+backtrace.png:
+	screenshot of the segfault showing the backtrace
+breakpoint.png:
+	screenshot of the segfault showing the value of pointer is NULL (0X0)
+
+Sources:
+	Figuring out how to use feature of makefile (suppress output)https://stackoverflow.com/questions/11871921/suppress-and-ignore-output-for-makefile
+	Learned how to an error shown by makefile, I split my lines https://www.gnu.org/software/make/manual/html_node/Splitting-Recipe-Lines.html
+	I utilized alot of stackoverflow when I ran into particular rabbithole bugs and piazza.
+	Using errno and strerror https://www.tutorialspoint.com/c_standard_library/c_function_strerror.htm
+	Makefiles information I looked at my old CS35L slides in my local machine.
+	refreshing myself on fprintf https://www.tutorialspoint.com/c_standard_library/c_function_fprintf.htm
+	getopt_long I read the man page as provided in spec.
+	file redirection I used my TA's slides and the link in spec.

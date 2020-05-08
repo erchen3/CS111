@@ -1,0 +1,20 @@
+NAME: Julia Wang, Eric Chen
+EMAIL: julia.wang.ca@gmail.com, erchen3pro@gmail.com
+ID: 904995934, 305099495
+
+lab3b.py:
+	A program that checks the filesystem summaries and audits blocks, inodes, and directories. It enforces "correctness" of output to the csv where improper lines will be identified and written to standard output. Specifically, we check for invalid blocks, reserved blocks, unreferenced blocks, allocated blocks, duplicate blocks, allocated inodes, unallocated inodes, proper link count, enforcement of directory referenced inode is allocated or unallocated correctly, and verifying links to parent directory and current directory.
+
+
+Makefile:
+	default: compiles the program
+	clean: deletes programs made by the Makefile
+	dist: creates tarball used for submission
+
+
+
+Citations:
+https://stackoverflow.com/questions/509211/understanding-slice-notation
+https://stackoverflow.com/questions/15286401/print-multiple-arguments-in-python
+https://docs.python.org/2/library/csv.html
+https://www.nongnu.org/ext2-doc/ext2.html#bg-block-bitmap

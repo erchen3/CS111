@@ -1,0 +1,123 @@
+NAME: Eric Chen
+EMAIL: erchen3pro@gmail.com
+ID: 
+
+
+
+
+SortedList.h:
+
+	This is a header file for the functions that need to be specified and provided by the specs.
+
+SortedList.c:
+	This is a source file that implements all the functions for sorted list's insert, delete, lookup, and length functions.
+
+
+lab2_list.c:
+	This is a driver program that uses the Sorted List structure to demonstrate Races and using synchronization.
+	    The behavior that gets produced is something we analyze and have several png's for that.
+
+lab2_add.c:
+	This is a driver program that uses the provided add function to demonstrate race & synchronization. This behavior get analyzed likewise when we pass in command-line options and are seen in the png's that are graphs.
+
+
+Makefile:
+
+	build: this option is used to compile and "build" the program so that it can run
+
+	tests:
+		This is a compilation of all test cases that I chose to run in order to make the plots.
+	graphs:
+		This runs the gnuplot scripts provided
+
+	dist:
+		this builds the tarball for delivery as a submission, putting all files into one.
+
+	clean:
+
+		this "cleans" the executables, tar, png's, and csv's that were created.
+lab2_add.csv:
+lab2_list.csv:
+		These are two data csv files that are input to the gnuplot script's provided.
+
+lab2_add-1.png:
+lab2_add-2.png:
+lab2_add-3.png:
+lab2_add-4.png:
+lab2_add-5.png:
+		These are the plots that were created from the test cases ran for part 1 of the lab.
+
+
+lab2_list-1.png:
+lab2_list-2.png:
+lab2_list-3.png:
+lab2_list-4.png:
+		These are plots that were generated from the test cases ran for part 2 of the lab using Sorted List.
+
+
+
+
+Question 2.1.1 - Causing Conflicts:
+	 Why does it take many iterations before errors are seen?
+	 Why does a significantly smaller number of iterations so seldom fail?
+
+-My results concluded that when I used more than 1 thread and at least 1000 iterations, race conditions appeared.It takes many iterations before errors are seen because many iterations allows time for multiple threads to be created and ran in parallel so that race conditions can fully develop. If the time is short, there won't be enough time for race conditions to develop.
+-Creating threads is sequential, if the first thread runs in a short amount of time and is so short that the second thread cannot be created, then there is no true parallelism and no race condition can exist. So a small number of iterations will lead to less time and no true parallelism occurs yet.
+
+
+
+
+
+QUESTION 2.1.2 - cost of yielding:
+Why are the --yield runs so much slower?
+Where is the additional time going?
+Is it possible to get valid per-operation timings if we are using the --yield option?
+If so, explain how. If not, explain why not.
+
+- The yield runs much slower because we are now considering the "cost" which is time of a context switch that occurs.
+-The additional time goes to the context switching from yield.
+-It is not possible to get valid per-operation timing if we use the yield option because cost on context switching drowns/pollutes the cost of adding.
+
+
+
+
+
+
+
+QUESTION 2.1.3 - measurement errors:
+Why does the average cost per operation drop with increasing iterations?
+If the cost per iteration is a function of the number of iterations, how do we know how many iterations to run (or what the "correct" cost is)?
+
+- The average cost per operation drops with increasing iterations because thread creation initially takes alot of time but when we increase iterations,the overhead cost of creating threads reduces because it becomes less significant compared to the total time for all iterations of add.
+-If the cost per iteration is a function of the number of iterations, we know that if we run the iterations until it approaches infinity, the overhead cost will be so small that it is neglible and the cost per iteration will be the "correct" cost.
+
+
+
+
+
+
+QUESTION 2.1.4 - costs of serialization:
+Why do all of the options perform similarly for low numbers of threads?
+Why do the three protected operations slow down as the number of threads rises?
+
+-When you have a low number of threads, there won't be many threads who will access the same resource
+at the same time so contention is low, especially when you're running on a multiprocessor machine.
+-As the thread number rises, more threads try to access resources in the critical section. A lot of threads trying to access that same resource which as a result will slow things down as threads wait for that resource. For example, mutexes put to sleep/context switch, or spin locks that waste a cycle which is overhead.
+
+
+
+
+QUESTION 2.2.1 - scalability of Mutex
+Compare the variation in time per mutex-protected operation vs the number of threads in Part-1 (adds) and Part-2 (sorted lists).
+Comment on the general shapes of the curves, and explain why they have this shape.
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+
+-The generaly shape for both graphs have approximately a linear trajectory however there are spike's when I built the tarball several times to view the changes in list-4 but I recall there was a potential issue with running it on the linux server which can cause the program to run a bit longer. Nonetheless, conceptually this makes sense as we know that spin-locks are the most expensive as the wait for the lock to be available, ie more overhead relative to the other methods. This is reflected in the graphs below. As we increase the number of threads, we're performance more operations whether it be add, insert, delete, lookup, or length which overall cost increases due the context switching between multiple threads and more threads also mean more waiting for locks. 
+-The relative rates of increase as mentioned are both approximately linear while the differences are one where between threads 1 & 2, add-5 has a linear trajectory and is throughout the entire graph while list-4 does not have that same behavior. As for other differences between the rates, the list-4 spin-lock rate looks like its slight sharper of a curve compared to add-5 but by a margin. This probably has something to do with the fact that we tested synchronization mechanisms on a data strucutre in comparison to a simple counter.
+
+
+QUESTION 2.2.2 - scalability of spin locks
+Compare the variation in time per protected operation vs the number of threads for list operations protected by Mutex vs Spin locks. Comment on the general shapes of the curves, and explain why they have this shape.
+Comment on the relative rates of increase and differences in the shapes of the curves, and offer an explanation for these differences.
+
+-The spin lock's shape for both curve's of add-5 and list-4 both have a "more" linear trajectory which reflects how well they scale, not well at all. The cost of operations for the spin-locks get increasingly larger as we increase the number of threads. As iterated in the previous question about the concept behind spin locks, that was expected and so if we had even more threads I hypothesize a linear trajectory to continue. There would be more CPU cycles that get consumed and that would be added overhead + context switching, which can be a few factors to consider to what comprises of the costs of the operations.

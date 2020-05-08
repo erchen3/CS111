@@ -1,0 +1,26 @@
+NAME: Eric Chen
+EMAIL: erchen3pro@gmail.com
+ID: 305099495
+
+Serial #: BBGW18042754
+MAC address: 2CF7F10699C1
+
+my_beaglebone.png:
+	This image is a selfie of me with my sweet beaglebone.
+git.png:
+	This image is a screenshot of me downloading git version control system onto my Beaglebone
+	and cloning a repository from my personal github called hello-world.
+copy.png:
+	This screenshot is a image to show that I successfully utilized SCP to push my program Hello World
+	to my Beaglebone.
+connected.png:
+	This screenshot shows the IP and Mac addresses after connecting to an internet access point and running ifconfig.
+build_run.png:
+	This screenshot shows the running of the program Hello World which outputs "Hello World"
+
+Makefile:
+	Used to build the tarball simply.
+
+
+Sources:
+	All references were used on the project description. No external references needed.
